@@ -58,6 +58,12 @@
   :type 'string
   :group 'all-the-icons-ivy)
 
+(defcustom all-the-icons-fixed-height
+  1.05
+  "Fixed height make icons align."
+  :type 'float
+  :group 'all-the-icons-ivy)
+
 (defcustom all-the-icons-ivy-family-fallback-for-buffer
   'all-the-icons-faicon
   "Icon font family used as a fallback when no icon for buffer transformer can be found."
@@ -93,7 +99,7 @@
 
 (defun all-the-icons-ivy--icon-for-mode (mode)
   "Apply `all-the-icons-for-mode' on MODE but either return an icon or nil."
-  (let ((icon (all-the-icons-icon-for-mode mode)))
+  (let ((icon (all-the-icons-icon-for-mode mode :height all-the-icons-fixed-height)))
     (unless (symbolp icon)
       icon)))
 
@@ -108,7 +114,8 @@ If that fails look for an icon for the mode that the `major-mode' is derived fro
                                        (all-the-icons-ivy--icon-for-mode (get mode 'derived-mode-parent))
                                        (funcall
                                         all-the-icons-ivy-family-fallback-for-buffer
-                                        all-the-icons-ivy-name-fallback-for-buffer)))
+                                        all-the-icons-ivy-name-fallback-for-buffer
+                                        :height all-the-icons-fixed-height)))
             (all-the-icons-ivy--buffer-propertize b s))))
 
 (defun all-the-icons-ivy-icon-for-file (s)
@@ -117,8 +124,10 @@ Return the octicon for directory if S is a directory.
 Otherwise fallback to calling `all-the-icons-icon-for-file'."
   (cond
    ((string-match-p "\\/$" s)
-    (all-the-icons-octicon "file-directory" :face 'all-the-icons-ivy-dir-face))
-   (t (all-the-icons-icon-for-file s))))
+    (all-the-icons-octicon "file-directory"
+                           :face 'all-the-icons-ivy-dir-face
+                           :height all-the-icons-fixed-height))
+   (t (all-the-icons-icon-for-file s :height all-the-icons-fixed-height))))
 
 (defun all-the-icons-ivy-file-transformer (s)
   "Return a candidate string for filename S preceded by an icon."
